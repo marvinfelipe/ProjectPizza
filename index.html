@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pizza Order System</title>
+    <style>
+
+      html{
+        background-color: #f9bd33;
+color: #ccc;
+      }
+      /* Pizza Grid */
+      .pizza-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); /* 3 columns for mobile */
+        gap: 20px;
+        margin: 20px 0;
+      }
+    
+      /* For larger screens, change to 2 columns */
+      @media (min-width: 768px) {
+        .pizza-grid {
+          grid-template-columns: repeat(5, 1fr); /* 2 columns for larger screens */
+        }
+      }
+    
+      /* Pizza item */
+      .pizza-item {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+        position: relative;
+        cursor: pointer;
+      }
+    
+      /* Quantity control */
+      .quantity-control {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    
+      .quantity-control input {
+        width: 50px;
+        text-align: center;
+      }
+    
+      /* Total Section */
+      .total-section {
+        margin-top: 20px;
+        font-size: 1.2em;
+      }
+    
+      /* Order List */
+      .order-list {
+        margin-top: 20px;
+        border-top: 1px solid #ddd;
+        padding-top: 20px;
+      }
+    
+      .order-list .order-item {
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+    
+      .order-list button {
+        background-color: #03a700;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        margin: 5px;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+      }
+    
+      .order-list button:hover {
+        background-color: #047602;
+      }
+    
+      .order-list button.completed {
+        background-color: gray;
+      }
+      .completed-orders button {
+        background-color: #fab616;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        margin: 5px;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+      }
+      .completed-orders button:hover{
+        background-color: #ce9309;
+
+      }
+    
+      /* Radio Group */
+      .radio-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+      }
+    
+      .radio-group input[type="radio"] {
+        display: none;
+      }
+    
+      .radio-group label {
+        padding: 10px 20px;
+        border: 2px solid #ccc;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+    
+      .radio-group input[type="radio"]:checked + label {
+        background-color: #fab616;
+        color: white;
+      }
+    
+      /* Minus Button */
+      .minus-button {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background-color: red;
+        color: white;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
+        display: none;
+        text-align: center;
+        line-height: 20px;
+        cursor: pointer;
+      }
+    
+      /* Export Button */
+      .export-button {
+        background-color: #fab616;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin: 10px 0;
+        transition: background-color 0.3s;
+      }
+    
+      .export-button:hover {
+        background-color: #ce9309;
+      }
+    
+      /* Order Form Styles */
+      .order-form {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #23232398;
+        border-radius: 8px;
+      }
+    
+      h1 {
+        text-align: center;
+        font-size: 2em;
+        margin-bottom: 20px;
+      }
+    
+      /* Form Group */
+      .form-group {
+        margin-bottom: 20px;
+      }
+    
+      .form-group label {
+        font-size: 1em;
+        display: block;
+        margin-bottom: 8px;
+      }
+    
+      .form-group input {
+        width: 100%;
+        padding: 10px;
+        font-size: 1em;
+        border: 2px solid #ccc;
+        border-radius: 4px;
+        transition: border-color 0.3s;
+      }
+    
+      .form-group input:focus {
+        border-color: #fab616;
+        outline: none;
+      }
+    
+      /* Submit Button */
+      .submit-button {
+        background-color: #fab616;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        width: 100%;
+        font-size: 1.1em;
+      }
+    
+      .submit-button:hover {
+        background-color: #ce9309;
+      }
+
+      .orders-container {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #23232398;
+        border-radius: 8px;
+        margin-top: 20px;
+
+      }
+      #myBtn {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 30px;
+  z-index: 99;
+  font-size: 18px;
+  border: none;
+  outline: none;
+  background-color: rgba(248, 178, 2, 0.635);
+  color: white;
+  cursor: pointer;
+  padding: 15px;
+  border-radius: 4px;
+  border: 1px solid #fff;
+
+}
+
+#myBtn:hover {
+  background-color: #555;
+}
+
+      
+    </style>
+  </head>
+  <body>
+    <div class="order-form">
+      <form id="orderForm">
+        <div id="pizza-sections"></div>
+        <div class="total-section">
+          <strong>Total: </strong>
+          <span id="totalAmount">₱0.00</span>
+        </div>
+
+        <div class="form-group">
+          <label for="customerName">Customer Name:</label>
+          <input type="text" id="customerName" required />
+        </div>
+
+        <div class="form-group">
+          <label for="phoneNumber">Phone Number:</label>
+          <input
+  type="tel"
+  id="phoneNumber"
+  pattern="[0-9]{11}"
+  placeholder="Enter phone number"
+  required
+  title="Phone number must be 11 digits"
+/>
+
+        </div>
+
+        <div class="form-group">
+          <label for="pickupTime">Pickup Time:</label>
+          <input type="time" id="pickupTime" required />
+        </div>
+
+        <div class="form-group">
+          <label for="orderType">Order Type:</label>
+          <div class="radio-group">
+            <input
+              type="radio"
+              id="orderTypeWalkIn"
+              name="orderType"
+              value="walkin"
+              required
+            />
+            <label for="orderTypeWalkIn">Walk in</label>
+            <input
+              type="radio"
+              id="orderTypeOnline"
+              name="orderType"
+              value="online"
+            />
+            <label for="orderTypeOnline">Online</label>
+          </div>
+        </div>
+
+        <button type="submit" class="submit-button">Place Order</button>
+      </form>
+    </div>
+
+    <div class="orders-container">
+      <div class="pending-orders">
+        <div class="section-header">
+          <h2>Pending Orders</h2>
+         
+        </div>
+        <div id="ordersList" class="order-list"></div>
+      </div>
+
+      <div class="completed-orders">
+        <div class="section-header">
+        
+          <button id="toggleCompletedOrders" class="toggle-button">
+            Show Completed Orders
+          </button>
+          <div class="export-section">
+            <button id="exportAllOrders" class="export-button">
+              Export All Orders
+            </button>
+            <button id="deleteAllCompleted" class="export-button">
+              Delete All Completed Orders
+            </button>
+            
+          </div>
+        </div>
+        <div id="completedList" class="order-list" style="display: none"></div>
+      </div>
+
+    </div>
+<button onclick="topFunction()" id="myBtn" title="Go to top">Top</button>
+    <script>
+
+      // Get the button
+let mybutton = document.getElementById("myBtn");
+
+// When the user scrolls down 20px from the top of the document, show the button
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+  if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+    mybutton.style.display = "block";
+  } else {
+    mybutton.style.display = "none";
+  }
+}
+
+// When the user clicks on the button, scroll to the top of the document
+function topFunction() {
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
+}
+    document.addEventListener("DOMContentLoaded", function () {
+  const pizzaData = [
+    {
+      brand: "Project Pizza",
+      name: "Ham and Bacon",
+      price: 285,
+      id: "project_ham_bacon",
+    },
+    {
+      brand: "Project Pizza",
+      name: "Triple Pepperoni",
+      price: 285,
+      id: "project_triple_pepperoni",
+    },
+    {
+      brand: "Jo's Pizza",
+      name: "Pepperoni",
+      price: 140,
+      id: "jos_pepperoni",
+    },
+    {
+      brand: "Jo's Pizza",
+      name: "Hawaiian",
+      price: 140,
+      id: "jos_hawaiian",
+    },
+    { 
+      brand: "Solo Saver", 
+      name: "Cheese", 
+      price: 95, 
+      id: "solo_cheese" 
+    },
+    {
+      brand: "Solo Saver",
+      name: "Pepperoni",
+      price: 95,
+      id: "solo_pepperoni",
+    },
+    {
+      brand: "Project Pizza",
+      name: "Six Cheese",
+      price: 285,
+      id: "project_six_cheese",
+    },
+    {
+      brand: "Project Pizza",
+      name: "Hawaiian",
+      price: 285,
+      id: "project_hawaiian",
+    },
+    {
+      brand: "Project Pizza",
+      name: "Chicken Alfredo",
+      price: 315,
+      id: "project_chicken_alfredo",
+    },
+    {
+      brand: "Project Pizza",
+      name: "Beef Supreme",
+      price: 315,
+      id: "project_beef_supreme",
+    },
+    {
+      brand: "Project Pizza",
+      name: "Creamy Spinach",
+      price: 360,
+      id: "project_creamy_spinach",
+    },
+    {
+      brand: "Project Pizza",
+      name: "Roast Beef",
+      price: 360,
+      id: "project_roast_beef",
+    },
+    {
+      brand: "Project Pizza",
+      name: "Texas BBQ",
+      price: 360,
+      id: "project_texas_bbq",
+    },
+    {
+      brand: "Jo's Pizza",
+      name: "Ham and Cheese",
+      price: 140,
+      id: "jos_ham_cheese",
+    },
+    {
+      brand: "Solo Saver",
+      name: "Hawaiian",
+      price: 95,
+      id: "solo_hawaiian",
+    },
+    {
+      brand: "Solo Saver",
+      name: "Beef Delux",
+      price: 105,
+      id: "solo_beef_delux",
+    },
+    {
+      brand: "Solo Saver",
+      name: "Creamy Spinach",
+      price: 105,
+      id: "solo_creamy_spinach",
+    },
+];
+
+
+  // Initialize orders from localStorage or empty arrays
+  let pendingOrders = JSON.parse(localStorage.getItem("pendingOrders")) || [];
+  let completedOrders = JSON.parse(localStorage.getItem("completedOrders")) || [];
+
+  function saveToLocalStorage() {
+    localStorage.setItem("pendingOrders", JSON.stringify(pendingOrders));
+    localStorage.setItem("completedOrders", JSON.stringify(completedOrders));
+  }
+
+  function renderPizzaSections() {
+    const pizzaSectionsContainer = document.getElementById("pizza-sections");
+    const brands = [...new Set(pizzaData.map((pizza) => pizza.brand))];
+
+    brands.forEach((brand) => {
+      const brandSection = document.createElement("div");
+      brandSection.classList.add("brand-section");
+      const brandTitle = document.createElement("h2");
+      brandTitle.innerText = brand;
+      brandSection.appendChild(brandTitle);
+
+      const pizzaGrid = document.createElement("div");
+      pizzaGrid.classList.add("pizza-grid");
+
+      pizzaData
+        .filter((pizza) => pizza.brand === brand)
+        .forEach((pizza) => {
+          const pizzaItem = document.createElement("div");
+          pizzaItem.classList.add("pizza-item");
+
+          const minusButton = document.createElement("div");
+          minusButton.classList.add("minus-button");
+          minusButton.innerText = "-";
+
+          minusButton.onclick = function (e) {
+            e.stopPropagation();
+            adjustQty(pizza.id, -1);
+          };
+
+          pizzaItem.innerHTML = `
+            <label>${pizza.name} <span class="price">₱${pizza.price}</span></label>
+            <div class="quantity-control">
+              <input type="number" id="qty-${pizza.id}" value="0" min="0" />
+            </div>
+          `;
+          pizzaItem.appendChild(minusButton);
+
+          pizzaItem.addEventListener("click", function (event) {
+            if (!event.target.classList.contains("minus-button")) {
+              adjustQty(pizza.id, 1);
+            }
+          });
+
+          pizzaGrid.appendChild(pizzaItem);
+        });
+      brandSection.appendChild(pizzaGrid);
+      pizzaSectionsContainer.appendChild(brandSection);
+    });
+  }
+
+  window.adjustQty = function (pizzaId, change) {
+    const qtyInput = document.getElementById(`qty-${pizzaId}`);
+    const pizzaItem = qtyInput.closest(".pizza-item");
+    let qty = parseInt(qtyInput.value);
+
+    if (qty === 0 && change > 0) {
+      qty = 1;
+    } else {
+      qty = Math.max(0, qty + change);
+    }
+
+    qtyInput.value = qty;
+
+    const minusButton = pizzaItem.querySelector(".minus-button");
+    if (qty > 0) {
+      minusButton.style.display = "inline-block";
+      pizzaItem.style.backgroundColor = "#ffd269";
+      pizzaItem.style.color = "#000";
+
+    } else {
+      minusButton.style.display = "none";
+      pizzaItem.style.backgroundColor = "";
+      pizzaItem.style.color = "#ccc";
+
+    }
+
+    updateTotal();
+    document.cookie = `qty-${pizzaId}=${qty};path=/;max-age=86400;`;
+  };
+
+  function updateTotal() {
+    const totalElement = document.getElementById("totalAmount");
+    if (!totalElement) return;
+
+    let total = 0;
+    pizzaData.forEach((pizza) => {
+      const qtyInput = document.getElementById(`qty-${pizza.id}`);
+      if (qtyInput) {
+        total += pizza.price * parseInt(qtyInput.value || 0);
+      }
+    });
+
+    totalElement.textContent = `₱${total.toFixed(2)}`;
+  }
+// Add delete all completed orders functionality
+document
+    .getElementById("deleteAllCompleted")
+    .addEventListener("click", function () {
+      if (confirm("Are you sure you want to delete all completed orders?")) {
+        // Clear completed orders from both the array and localStorage
+        completedOrders = [];
+        localStorage.setItem("completedOrders", JSON.stringify(completedOrders));
+
+        // Re-render the completed orders list
+        renderCompletedOrders();
+      }
+    });
+  function renderPendingOrders() {
+    const ordersList = document.getElementById("ordersList");
+    if (!ordersList) return;
+
+    ordersList.innerHTML = "";
+
+    pendingOrders.forEach((order) => {
+      const orderItem = document.createElement("div");
+      orderItem.classList.add("order-item");
+      orderItem.innerHTML = `
+        <h3>${order.customerName} | ${order.phoneNumber}</h3>
+        <p><strong>Pickup Time:</strong> ${order.pickupTime}</p>
+        <p><strong>Order Type:</strong> ${order.orderType}</p>
+        <h4>Ordered Items:</h4>
+        <ul>
+          ${order.pizzas
+            .map(
+              (pizza) =>
+                `<li>${pizza.qty}x ${pizza.name} (₱${
+                  pizza.price * pizza.qty
+                })</li>`
+            )
+            .join("")}
+        </ul>
+        <p><strong>Total: ₱${order.total.toFixed(2)}</strong></p>
+        <button onclick="completeOrder(${order.id})">Done</button>
+      `;
+      ordersList.appendChild(orderItem);
+    });
+
+    saveToLocalStorage();
+  }
+
+  function renderCompletedOrders() {
+  const completedList = document.getElementById("completedList");
+  completedList.innerHTML = "";
+
+  if (completedOrders.length === 0) {
+    completedList.innerHTML = "    <h2>Completed Orders</h2>";
+
+    completedList.innerHTML = "<p>No completed orders.</p>";
+  } else {
+    
+    completedList.innerHTML = "    <h2>Completed Orders</h2>";
+
+
+    completedOrders.forEach((order) => {
+      const orderItem = document.createElement("div");
+      orderItem.classList.add("order-item");
+      const orderTotal = !isNaN(order.total) && order.total !== null
+        ? order.total.toFixed(2)
+        : "0.00";
+
+        orderItem.innerHTML = `
+  <h3>${order.customerName} | ${order.phoneNumber}</h3>
+  <p><strong>Pickup:</strong> ${order.pickupTime}</p>
+  <p><strong>Type:</strong> ${order.orderType}</p>
+  <h4>Items:</h4>
+  <ul>${order.pizzas.map(pizza => `<li>${pizza.qty}x ${pizza.name} (₱${pizza.price * pizza.qty})</li>`).join("")}</ul>
+  <p><strong>Total:</strong> ₱${orderTotal}</p>
+  <p><strong>Done:</strong> ${order.completedAt}</p>`;
+
+
+      completedList.appendChild(orderItem);
+    });
+  }
+
+  saveToLocalStorage();
+}
+function clearCompletedOrdersCookies() {
+  document.cookie = "completedOrders=;path=/;max-age=0;";
+}
+
+
+  document
+    .getElementById("toggleCompletedOrders")
+    .addEventListener("click", function () {
+      const completedList = document.getElementById("completedList");
+      const toggleButton = document.getElementById("toggleCompletedOrders");
+
+      if (
+        completedList.style.display === "none" ||
+        completedList.style.display === ""
+      ) {
+        completedList.style.display = "block";
+        toggleButton.innerText = "Hide Completed Orders";
+      } else {
+        completedList.style.display = "none";
+        toggleButton.innerText = "Show Completed Orders";
+      }
+    });
+
+  window.completeOrder = function (orderId) {
+    const orderIndex = pendingOrders.findIndex((order) => order.id === orderId);
+    if (orderIndex !== -1) {
+      const completedOrder = pendingOrders.splice(orderIndex, 1)[0];
+      completedOrder.completedAt = new Date().toLocaleString();
+      completedOrders.push(completedOrder);
+      renderPendingOrders();
+      renderCompletedOrders();
+    }
+  };
+  function exportToExcel(orders, fileName) {
+  let csv = "Order ID,Time Updated,Pickup Time,Customer Name,Order Details,Individual Prices,Total Amount,Phone Number,Status\n";
+
+  orders.forEach((order, index) => {
+    if (!order) {
+      console.error(`Order at index ${index} is undefined or null.`);
+      return;
+    }
+
+    const orderDate = new Date(order.id || Date.now());
+    const formattedDate = orderDate.toISOString().split("T")[0].replace(/-/g, "");
+    const formattedOrderId = `${formattedDate}-${order.id || "N/A"}`;
+
+    const timeUpdated = order.completedAt || order.orderDate || "N/A";
+    const pickupTime = order.pickupTime || "N/A";
+    const customerName = order.customerName || "N/A";
+    const phoneNumber = order.phoneNumber || "N/A";
+    const status = order.completedAt ? "Completed" : "Pending";
+
+    const pizzas = order.pizzas || [];
+    const orderDetails = pizzas.map((pizza) => `${pizza.qty}x ${pizza.name}`).join("; ");
+    const individualPrices = pizzas.map((pizza) => `₱${(pizza.price * pizza.qty).toFixed(2)}`).join("; ");
+    const totalAmount = order.total ? `₱${order.total.toFixed(2)}` : "₱0.00";
+
+    const escapeCsvField = (field) => (field && field.includes(",") ? `"${field}"` : field);
+
+    const row = [
+      formattedOrderId,
+      timeUpdated,
+      pickupTime,
+      escapeCsvField(customerName),
+      escapeCsvField(orderDetails || "N/A"),
+      escapeCsvField(individualPrices || "N/A"),
+      totalAmount,
+      phoneNumber,
+      status,
+    ].join(",");
+
+    csv += row + "\n";
+  });
+
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = window.URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.setAttribute("hidden", "");
+  a.setAttribute("href", url);
+  a.setAttribute("download", fileName);
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  window.URL.revokeObjectURL(url);
+}
+
+
+
+
+  document.getElementById("orderForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const pickupTime = document.getElementById("pickupTime").value;
+    const orderType = document.querySelector(
+      'input[name="orderType"]:checked'
+    );
+    const customerName = document.getElementById("customerName").value;
+    const phoneNumber = document.getElementById("phoneNumber").value;
+
+    const pizzasOrdered = pizzaData
+      .filter((pizza) => {
+        const qtyInput = document.getElementById(`qty-${pizza.id}`);
+        return parseInt(qtyInput.value || 0) > 0;
+      })
+      .map((pizza) => {
+        const qty = parseInt(
+          document.getElementById(`qty-${pizza.id}`).value || 0
+        );
+        return {
+          name: pizza.name,
+          qty: qty,
+          price: pizza.price,
+        };
+      });
+
+    if (!pickupTime) {
+      alert("Please select a pickup time");
+      return;
+    }
+
+    if (!orderType) {
+      alert("Please select an order type (Walk in or Online)");
+      return;
+    }
+
+    if (!customerName.trim()) {
+      alert("Please enter customer name");
+      return;
+    }
+
+    if (!phoneNumber.trim()) {
+      alert("Please enter phone number");
+      return;
+    }
+
+    if (pizzasOrdered.length === 0) {
+      alert("Please select at least one pizza");
+      return;
+    }
+
+    const total = pizzasOrdered.reduce(
+      (sum, pizza) => sum + pizza.price * pizza.qty,
+      0
+    );
+
+    const orderId = Date.now();
+    const order = {
+      id: orderId,
+      customerName,
+      phoneNumber,
+      pickupTime,
+      orderType: orderType.value,
+      pizzas: pizzasOrdered,
+      total: total,
+      orderDate: new Date().toLocaleString(),
+    };
+
+    pendingOrders.push(order);
+    renderPendingOrders();
+
+    e.target.reset();
+
+    pizzaData.forEach((pizza) => {
+      const qtyInput = document.getElementById(`qty-${pizza.id}`);
+      if (qtyInput) {
+        qtyInput.value = 0;
+        const pizzaItem = qtyInput.closest(".pizza-item");
+        if (pizzaItem) {
+          pizzaItem.style.backgroundColor = "";
+          const minusButton = pizzaItem.querySelector(".minus-button");
+          if (minusButton) {
+            minusButton.style.display = "none";
+          }
+        }
+      }
+      document.cookie = `qty-${pizza.id}=0;path=/;max-age=0;`;
+    });
+
+    updateTotal();
+    alert("Order placed successfully!");
+  });
+
+  function restoreQuantitiesFromCookies() {
+    const cookies = document.cookie.split(";");
+    cookies.forEach((cookie) => {
+      const [name, value] = cookie.trim().split("=");
+      if (name.startsWith("qty-")) {
+        const qtyInput = document.getElementById(name);
+        if (qtyInput) {
+          qtyInput.value = value;
+          if (parseInt(value) > 0) {
+            const pizzaItem = qtyInput.closest(".pizza-item");
+            pizzaItem.style.backgroundColor = "#ffd269";
+            pizzaItem.style.color = "#000";
+
+            const minusButton = pizzaItem.querySelector(".minus-button");
+            minusButton.style.display = "inline-block";
+          }
+        }
+      }
+    });
+    updateTotal();
+  }
+
+  // Add event listener for the single export button
+  document.getElementById("exportAllOrders").addEventListener("click", function() {
+    const allOrders = [...pendingOrders, ...completedOrders];
+    exportToExcel(allOrders, "all_orders.csv");
+  });
+
+  // Initialize the application
+  renderPizzaSections();
+  renderPendingOrders();
+  renderCompletedOrders();
+  restoreQuantitiesFromCookies();
+
+  // Periodically save state
+  setInterval(saveToLocalStorage, 30000); // Save every 30 seconds
+
+  // Add event listener for beforeunload to save state
+  window.addEventListener("beforeunload", function () {
+    saveToLocalStorage();
+  });
+});
+    </script>
+  </body>
+</html>
